@@ -1,0 +1,285 @@
+<header class="topbar">
+    <div class="topbar-left">
+        <h2 id="pageTitle">Sistem Log Kayıtları</h2>
+        <span class="breadcrumb">Ana Sayfa / Log Kayıtları</span>
+    </div>
+    <div class="topbar-right">
+        <div class="datetime-display">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+            <span id="currentDateTime">--:--:--</span>
+        </div>
+        <button class="notification-btn" id="notificationBtn">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+            <span class="notification-badge" id="notificationCount">0</span>
+        </button>
+    </div>
+</header>
+
+<div class="dashboard-container">
+    <div class="status-card">
+        <div class="page-header">
+            <h1>📄 Sistem Log Kayıtları</h1>
+            <p class="page-description">Sistemde gerçekleşen olayların kayıtlarını görüntüleyin ve yönetin.</p>
+        </div>
+        
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <h3>⚙️ Log Kontrolü</h3>
+            <div class="control-buttons">
+                <button id="refreshLogsBtn" class="btn primary">
+                    <span class="btn-icon">🔄</span>
+                    <span class="btn-text">Yenile</span>
+                </button>
+                <button id="exportLogsBtn" class="btn success">
+                    <span class="btn-icon">📥</span>
+                    <span class="btn-text">CSV İndir</span>
+                </button>
+                <button id="exportExcelBtn" class="btn info">
+                    <span class="btn-icon">📊</span>
+                    <span class="btn-text">Excel İndir</span>
+                </button>
+                <button id="pauseLogsBtn" class="btn warning">
+                    <span class="btn-icon">⏸️</span>
+                    <span class="btn-text">Duraklat</span>
+                </button>
+                <button id="clearLogsBtn" class="btn danger">
+                    <span class="btn-icon">🗑️</span>
+                    <span class="btn-text">Logları Temizle</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Status Section -->
+        <div class="status-section">
+            <h3>📊 Log İstatistikleri</h3>
+            <div class="status-grid small">
+                <div class="status-item compact">
+                    <span class="label">Toplam Kayıt:</span>
+                    <span id="totalLogs" class="value">0</span>
+                </div>
+                <div class="status-item compact">
+                    <span class="label">Hata Sayısı:</span>
+                    <span id="errorCount" class="value error">0</span>
+                </div>
+                <div class="status-item compact">
+                    <span class="label">Uyarı Sayısı:</span>
+                    <span id="warningCount" class="value warning">0</span>
+                </div>
+                <div class="status-item compact">
+                    <span class="label">Son Güncelleme:</span>
+                    <span id="lastLogUpdate" class="value">Yükleniyor...</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <h3>🔍 Filtreleme ve Arama</h3>
+            <div class="filter-controls" id="filterControls">
+                <div class="filter-group">
+                    <label for="logSearch">🔍 Arama:</label>
+                    <input type="text" 
+                           id="logSearch" 
+                           placeholder="Log içeriğinde ara..." 
+                           autocomplete="off"
+                           maxlength="100">
+                </div>
+                
+                <div class="filter-group">
+                    <label for="logLevelFilter">📊 Seviye:</label>
+                    <select id="logLevelFilter">
+                        <option value="all">Tümü</option>
+                        <option value="ERROR">🔴 Hata</option>
+                        <option value="WARN">🟡 Uyarı</option>
+                        <option value="INFO">🔵 Bilgi</option>
+                        <option value="SUCCESS">🟢 Başarılı</option>
+                        <option value="DEBUG">⚫ Debug</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="logSourceFilter">📁 Kaynak:</label>
+                    <select id="logSourceFilter">
+                        <option value="all">Tümü</option>
+                        <option value="SYSTEM">Sistem</option>
+                        <option value="NETWORK">Ağ</option>
+                        <option value="NTP">NTP</option>
+                        <option value="UART">UART</option>
+                        <option value="USER">Kullanıcı</option>
+                        <option value="AUTH">Kimlik Doğrulama</option>
+                        <option value="WEB">Web</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <button id="clearFiltersBtn" class="btn secondary small" style="display: none;">
+                        🧹 Filtreleri Temizle
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Log Section -->
+        <div class="log-section">
+            <div class="section-header">
+                <h3>📋 Log Kayıtları</h3>
+                <div class="section-controls">
+                    <button id="autoRefreshToggle" class="toggle-btn active" data-active="true">
+                        <span class="toggle-icon">🔄</span>
+                        <span class="toggle-text">Otomatik Yenileme</span>
+                    </button>
+                    
+                    <div class="refresh-interval-group">
+                        <label for="refreshInterval">Yenileme:</label>
+                        <select id="refreshInterval" class="refresh-select">
+                            <option value="1000">1s</option>
+                            <option value="2000">2s</option>
+                            <option value="5000" selected>5s</option>
+                            <option value="10000">10s</option>
+                            <option value="30000">30s</option>
+                            <option value="60000">1dk</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="logContainer" class="log-container">
+                <div class="loading-logs">
+                    <div class="loading-spinner"></div>
+                    <p>Log kayıtları yükleniyor...</p>
+                </div>
+            </div>
+            
+            <!-- Pagination Controls burada olacak (JavaScript ile eklenecek) -->
+        </div>
+        
+        <!-- Info Box -->
+        <div class="info-box">
+            <h4>💡 Log Seviyeleri</h4>
+            <div class="log-levels">
+                <div class="level-item">
+                    <span class="level-badge level-error">ERROR</span>
+                    <span class="level-desc">Sistem hataları ve kritik problemler</span>
+                </div>
+                <div class="level-item">
+                    <span class="level-badge level-warn">WARN</span>
+                    <span class="level-desc">Uyarılar ve potansiyel problemler</span>
+                </div>
+                <div class="level-item">
+                    <span class="level-badge level-info">INFO</span>
+                    <span class="level-desc">Genel bilgi ve sistem olayları</span>
+                </div>
+                <div class="level-item">
+                    <span class="level-badge level-success">SUCCESS</span>
+                    <span class="level-desc">Başarılı işlemler ve onaylar</span>
+                </div>
+                <div class="level-item">
+                    <span class="level-badge level-debug">DEBUG</span>
+                    <span class="level-desc">Geliştirici bilgileri ve sistem detayları</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Usage Info -->
+        <div class="info-box">
+            <h4>🎯 Kullanım İpuçları</h4>
+            <ul>
+                <li><strong>Sayfalama:</strong> 50'den fazla log varsa sayfa numaralarını kullanarak diğer sayfalara geçebilirsiniz</li>
+                <li><strong>Arama:</strong> Herhangi bir kelimeyi arayarak loglar içinde filtreleme yapabilirsiniz</li>
+                <li><strong>Seviye Filtresi:</strong> Sadece belirli önem seviyesindeki logları gösterebilirsiniz</li>
+                <li><strong>Otomatik Yenileme:</strong> İlk sayfadaki loglar belirli aralıklarla otomatik güncellenir</li>
+                <li><strong>Dışa Aktarma:</strong> Tüm logları CSV veya Excel formatında indirebilirsiniz</li>
+                <li><strong>Temizleme:</strong> Log kayıtlarını hafızadan kalıcı olarak silebilirsiniz (dikkatli kullanın!)</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Simplified CSS -->
+<style>
+.refresh-interval-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.refresh-interval-group label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.refresh-select {
+    min-width: 80px;
+    font-size: 0.875rem;
+    padding: 0.375rem 0.5rem;
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-sm);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.refresh-select:hover {
+    border-color: var(--primary);
+}
+
+.refresh-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.section-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.toggle-btn:hover {
+    background: var(--bg-tertiary);
+}
+
+.toggle-btn.active {
+    background: var(--success);
+    color: white;
+    border-color: var(--success);
+}
+
+.toggle-btn.active .toggle-icon {
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .section-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+    
+    .refresh-interval-group {
+        justify-content: space-between;
+    }
+}
+</style>

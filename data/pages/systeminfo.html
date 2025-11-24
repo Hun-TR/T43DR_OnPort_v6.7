@@ -1,0 +1,183 @@
+<!-- data/pages/systeminfo.html -->
+<header class="topbar">
+    <div class="topbar-left">
+        <h2 id="pageTitle">Sistem Bilgileri</h2>
+        <span class="breadcrumb">Ana Sayfa / Sistem Bilgisi</span>
+    </div>
+    <div class="topbar-right">
+        <div class="datetime-display">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+            <span id="currentDateTime">--:--:--</span>
+        </div>
+        <button class="notification-btn" id="notificationBtn">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+            <span class="notification-badge" id="notificationCount">0</span>
+        </button>
+    </div>
+</header>
+
+<div class="dashboard-container">
+    <div class="status-grid">
+        <!-- Donanım Bilgileri -->
+        <div class="status-card">
+            <div class="card-header">
+                <svg class="card-icon" viewBox="0 0 24 24"><path d="M12 2l-5.5 9h11z M12 22l5.5-9h-11z M3.5 9l5.5 9v-11z M20.5 9l-5.5 9v-11z"/></svg>
+                <h3>Donanım Bilgileri</h3>
+            </div>
+            <div class="card-body">
+                <div class="metric">
+                    <span class="metric-label">İşlemci</span>
+                    <span class="metric-value" id="chipModel">ESP32</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Çekirdek Sayısı</span>
+                    <span class="metric-value" id="coreCount">2</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">CPU Frekansı</span>
+                    <span class="metric-value" id="cpuFreq">240 MHz</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Chip Revision</span>
+                    <span class="metric-value" id="chipRevision">---</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Flash Bellek</span>
+                    <span class="metric-value" id="flashSize">---</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bellek Durumu -->
+        <div class="status-card">
+            <div class="card-header">
+                <svg class="card-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+                <h3>Bellek Durumu</h3>
+            </div>
+            <div class="card-body">
+                <div class="metric">
+                    <span class="metric-label">Toplam RAM</span>
+                    <span class="metric-value" id="totalHeap">---</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Kullanılan RAM</span>
+                    <span class="metric-value" id="usedHeap">---</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Boş RAM</span>
+                    <span class="metric-value" id="freeHeap">---</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Min Boş RAM</span>
+                    <span class="metric-value" id="minFreeHeap">---</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">RAM Kullanımı</span>
+                    <span class="metric-value">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="ramUsageBar" style="width: 0%"></div>
+                        </div>
+                        <span id="ramUsagePercent">0%</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Yazılım Bilgileri -->
+        <div class="status-card">
+            <div class="card-header">
+                <svg class="card-icon" viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+                <h3>Yazılım Bilgileri</h3>
+            </div>
+            <div class="card-body">
+                <div class="metric">
+                    <span class="metric-label">Firmware Versiyon</span>
+                    <span class="metric-value" id="firmwareVersion">v5.2</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">SDK Versiyon</span>
+                    <span class="metric-value" id="sdkVersion">---</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Derleme Tarihi</span>
+                    <span class="metric-value" id="buildDate">---</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Çalışma Süresi</span>
+                    <span class="metric-value" id="uptime">---</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Yeniden Başlatma Sayısı</span>
+                    <span class="metric-value" id="rebootCount">---</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- UART İstatistikleri -->
+    <div class="status-card">
+        <div class="page-header">
+            <h1>📊 UART İletişim İstatistikleri</h1>
+        </div>
+        <div class="status-grid small">
+            <div class="status-item compact">
+                <span class="label">Gönderilen Paket:</span>
+                <span id="uartTxCount" class="value">0</span>
+            </div>
+            <div class="status-item compact">
+                <span class="label">Alınan Paket:</span>
+                <span id="uartRxCount" class="value">0</span>
+            </div>
+            <div class="status-item compact">
+                <span class="label">Hata Sayısı:</span>
+                <span id="uartErrorCount" class="value error">0</span>
+            </div>
+            <div class="status-item compact">
+                <span class="label">Başarı Oranı:</span>
+                <span id="uartSuccessRate" class="value">100%</span>
+            </div>
+            <div class="status-item compact">
+                <span class="label">Son İletişim:</span>
+                <span id="lastUartComm" class="value">---</span>
+            </div>
+            <div class="status-item compact">
+                <span class="label">Baud Rate:</span>
+                <span id="currentBaud" class="value">115200</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dosya Sistemi -->
+    <div class="status-card">
+        <div class="page-header">
+            <h1>💾 Dosya Sistemi Bilgileri</h1>
+        </div>
+        <div class="status-grid small">
+            <div class="status-item compact">
+                <span class="label">Dosya Sistemi:</span>
+                <span id="fsType" class="value">LittleFS</span>
+            </div>
+            <div class="status-item compact">
+                <span class="label">Toplam Alan:</span>
+                <span id="totalSpace" class="value">---</span>
+            </div>
+            <div class="status-item compact">
+                <span class="label">Kullanılan Alan:</span>
+                <span id="usedSpace" class="value">---</span>
+            </div>
+            <div class="status-item compact">
+                <span class="label">Boş Alan:</span>
+                <span id="freeSpace" class="value">---</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button class="btn primary" id="refreshBtn">
+            <span class="btn-text">🔄 Bilgileri Yenile</span>
+        </button>
+        <button class="btn warning" id="rebootBtn">
+            <span class="btn-text">🔄 Sistemi Yeniden Başlat</span>
+        </button>
+    </div>
+</div>

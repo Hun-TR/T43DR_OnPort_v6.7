@@ -1,0 +1,136 @@
+<header class="topbar">
+    <div class="topbar-left">
+        <h2 id="pageTitle">NTP Sunucu Ayarları</h2>
+        <span class="breadcrumb">Ana Sayfa / NTP Ayarları</span>
+    </div>
+    <div class="topbar-right">
+        <div class="datetime-display">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+            <span id="currentDateTime">--:--:--</span>
+        </div>
+        <button class="notification-btn" id="notificationBtn">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+            <span class="notification-badge" id="notificationCount">0</span>
+        </button>
+    </div>
+</header>
+<div class="dashboard-container">
+    <div class="status-card">
+        <div class="page-header">
+            <h1>📡 NTP Sunucu Ayarları</h1>
+            <p class="page-description">Arka porttaki NTP kartı için zaman sunucusu ayarlarını yapılandırın.</p>
+        </div>
+        <div id="message-container"></div>
+        <div class="status-section">
+            <h3>📊 Mevcut NTP Durumu</h3>
+            <div class="status-grid small">
+                <div class="status-item compact"><span class="label">Birincil Sunucu:</span><span id="currentServer1" class="value">Yükleniyor...</span></div>
+                <div class="status-item compact"><span class="label">Yedek Sunucu:</span><span id="currentServer2" class="value">Yükleniyor...</span></div>
+                <div class="status-item compact"><span class="label">Son Güncelleme:</span><span id="lastUpdate" class="value">Yükleniyor...</span></div>
+                <!-- YENİ: Senkronizasyon durumu -->
+                <div class="status-item compact"><span class="label">Senkronizasyon:</span><span id="syncStatus" class="value" style="color: var(--success);">✅ Senkron</span>
+        </div>
+            </div>
+        </div>
+        <form id="ntpForm" class="settings-form">
+            <div class="settings-section">
+                <h3 class="section-title">⚙️ NTP Sunucu Yapılandırması</h3>
+                
+                <!-- Birincil NTP Sunucusu - Düzeltilmiş IP Input -->
+                <div class="form-group">
+                    <label for="ntpServer1" class="required">Birincil NTP Sunucusu (IP)</label>
+                    <div class="ip-input-container">
+                        <input type="number" class="ip-part" min="0" max="255" placeholder="192" data-part="1">
+                        <span class="ip-dot">.</span>
+                        <input type="number" class="ip-part" min="0" max="255" placeholder="168" data-part="2">
+                        <span class="ip-dot">.</span>
+                        <input type="number" class="ip-part" min="0" max="255" placeholder="1" data-part="3">
+                        <span class="ip-dot">.</span>
+                        <input type="number" class="ip-part" min="0" max="255" placeholder="1" data-part="4">
+                    </div>
+                    <input type="hidden" id="ntpServer1" name="ntpServer1" required>
+                    <small class="form-help">Ana NTP sunucusunun IP adresi (örn: 192.168.1.1)</small>
+                </div>
+
+                <!-- İkincil NTP Sunucusu - Düzeltilmiş IP Input -->
+                <div class="form-group">
+                    <label for="ntpServer2">İkincil NTP Sunucusu (IP - Opsiyonel)</label>
+                    <div class="ip-input-container">
+                        <input type="number" class="ip-part" min="0" max="255" placeholder="8" data-part="1" id="ntp2-part1">
+                        <span class="ip-dot">.</span>
+                        <input type="number" class="ip-part" min="0" max="255" placeholder="8" data-part="2" id="ntp2-part2">
+                        <span class="ip-dot">.</span>
+                        <input type="number" class="ip-part" min="0" max="255" placeholder="8" data-part="3" id="ntp2-part3">
+                        <span class="ip-dot">.</span>
+                        <input type="number" class="ip-part" min="0" max="255" placeholder="8" data-part="4" id="ntp2-part4">
+                    </div>
+                    <input type="hidden" id="ntpServer2" name="ntpServer2">
+                    <small class="form-help">Yedek NTP sunucusu IP adresi (boş bırakılabilir)</small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn info" id="syncNtpBtn">
+                        <span class="btn-text">🔍 dsPIC'ten NTP Ayarlarını Çek</span>
+                        <div class="btn-loader"></div>
+                    </button>
+                    <button type="submit" class="btn primary" id="saveNtpBtn">
+                        <span class="btn-text">📡 Ayarları Arka Porta Gönder</span>
+                        <div class="btn-loader"></div>
+                    </button>
+                    <button type="button" class="btn secondary" id="clearNtpBtn">
+                        🗑️ Temizle
+                    </button>
+                </div>
+            </div>
+        </form>
+        
+        <div class="info-box">
+            <h4>💡 Önemli Bilgiler</h4>
+            <ul>
+                <li>Bu ayarlar kaydedildikten sonra UART üzerinden arka porttaki cihaza gönderilecektir</li>
+                <li>Değişiklikler anında uygulanır ve sistem otomatik olarak yeni sunucuları kullanmaya başlar</li>
+                <li>NTP sunucularının ağınızdan erişilebilir olduğundan emin olun</li>
+                <li>İki farklı sunucu kullanılması sistem güvenilirliğini artırır</li>
+                <li>IP adresi formatı: XXX.XXX.XXX.XXX (0-255 arası değerler)</li>
+            </ul>
+        </div>
+        
+        <div id="testResults" class="test-results" style="display: none;">
+            <h4>🔍 Bağlantı Test Sonuçları</h4>
+            <div id="testContent"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// NTP sayfası için özel script - form temizleme butonu
+document.addEventListener('DOMContentLoaded', function() {
+    const clearBtn = document.getElementById('clearNtpBtn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function() {
+            // Tüm IP input'larını temizle
+            document.querySelectorAll('.ip-part').forEach(input => {
+                input.value = '';
+            });
+            
+            // Hidden input'ları temizle
+            document.getElementById('ntpServer1').value = '';
+            document.getElementById('ntpServer2').value = '';
+            
+            // Validation class'larını temizle
+            document.querySelectorAll('.ip-input-container').forEach(container => {
+                container.classList.remove('valid', 'invalid');
+                container.classList.add('empty');
+            });
+            
+            showMessage('Form temizlendi', 'info');
+        });
+    }
+    
+    // Sayfa yüklendiğinde IP input'ları güncelle
+    setTimeout(() => {
+        updateHiddenIPInput(false);
+        updateHiddenIPInput(true);
+    }, 100);
+});
+</script>

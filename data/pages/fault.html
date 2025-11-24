@@ -1,0 +1,492 @@
+<header class="topbar">
+    <div class="topbar-left">
+        <h2 id="pageTitle">Arıza Kayıtları Sistemi</h2>
+        <span class="breadcrumb">Ana Sayfa / Arıza Kayıtları</span>
+    </div>
+    <div class="topbar-right">
+        <div class="datetime-display">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+            <span id="currentDateTime">--:--:--</span>
+        </div>
+        <button class="notification-btn" id="notificationBtn">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+            <span class="notification-badge" id="notificationCount">0</span>
+        </button>
+    </div>
+</header>
+
+<div class="dashboard-container">
+    <div class="status-card">
+        <div class="page-header">
+            <h1>🛠️ Arıza Kayıtları Sistemi</h1>
+            <p class="page-description">dsPIC33EP işlemcisinden tüm arıza kayıtlarını otomatik olarak çekin ve inceleyin.</p>
+        </div>
+        
+        <div class="control-panel">
+            <h3>📋 Arıza Sorgu Kontrolü</h3>
+            <div class="control-buttons">
+                <button id="fetchAllFaultsBtn" class="btn primary">
+                    <span class="btn-icon">📥</span>
+                    <span class="btn-text">Tüm Arızaları İste</span>
+                    <div class="btn-loader"></div>
+                </button>
+                <button id="refreshFaultBtn" class="btn info">
+                    <span class="btn-icon">🔄</span>
+                    <span class="btn-text">Tabloyu Yenile</span>
+                </button>
+                <button id="clearFaultBtn" class="btn secondary">
+                    <span class="btn-icon">🗑️</span>
+                    <span class="btn-text">Tabloyu Temizle</span>
+                </button>
+                <button id="deleteFaultsFromDsPICBtn" class="btn danger">
+                    <span class="btn-icon">⚠️</span>
+                    <span class="btn-text">dsPIC Arızalarını Sil</span>
+                    <div class="btn-loader"></div>
+                </button>
+            </div>
+            
+            <!-- İlerleme çubuğu -->
+            <div id="progressSection" style="display: none; margin-top: 1rem;">
+                <div class="progress-container">
+                    <div class="progress-header">
+                        <span id="progressText">Arıza kayıtları alınıyor...</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar-wrapper">
+                        <div id="progressBar" class="progress-bar-fill"></div>
+                    </div>
+                    <div class="progress-stats">
+                        <span id="progressCurrent">0</span> / <span id="progressTotal">0</span> kayıt
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-section">
+            <h3>📊 Arıza Sistemi Durumu</h3>
+            <div class="status-grid small">
+                <div class="status-item compact">
+                    <span class="label">Bağlantı Durumu:</span>
+                    <span id="faultCommStatus" class="value status-badge">Hazır</span>
+                </div>
+                <div class="status-item compact">
+                    <span class="label">Toplam Kayıt:</span>
+                    <span id="totalFaults" class="value">0</span>
+                </div>
+                <div class="status-item compact">
+                    <span class="label">Son Sorgu:</span>
+                    <span id="lastQuery" class="value">Henüz sorgu yapılmadı</span>
+                </div>
+                <div class="status-item compact">
+                    <span class="label">Sistem Arıza Sayısı:</span>
+                    <span id="systemFaultCount" class="value">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Arıza Tablosu Bölümü -->
+        <div class="fault-section">
+            <div class="section-header">
+                <h3>📄 Arıza Kayıtları Tablosu</h3>
+                <div class="section-controls">
+                    <button id="exportCSVBtn" class="btn success">
+                        <span class="btn-icon">📊</span>
+                        <span class="btn-text">CSV İndir</span>
+                    </button>
+                    <button id="exportExcelBtn" class="btn info">
+                        <span class="btn-icon">📈</span>
+                        <span class="btn-text">Excel İndir</span>
+                    </button>
+                    <select id="filterPinType" class="filter-select">
+                        <option value="all">Tüm Pinler</option>
+                        <option value="Çıkış">Sadece Çıkışlar</option>
+                        <option value="Giriş">Sadece Girişler</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div id="faultTableContainer" class="fault-table-container">
+                <table id="faultTable" class="fault-table">
+                    <thead>
+                        <tr>
+                            <th>Sıra</th>
+                            <th>Arıza No</th>
+                            <th>Pin No</th>
+                            <th>Pin Tipi</th>
+                            <th>Tarih-Saat</th>
+                            <th>Arıza Süresi</th>
+                            <th>Ham Veri</th>
+                        </tr>
+                    </thead>
+                    <tbody id="faultTableBody">
+                        <tr class="empty-row">
+                            <td colspan="7" class="empty-state">
+                                <div class="empty-icon">📝</div>
+                                <h4>Arıza kaydı bulunamadı</h4>
+                                <p>Arıza kayıtlarını görüntülemek için yukarıdaki butonları kullanın.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Manuel UART Test -->
+        <div class="settings-section" style="margin-top: 2rem;">
+            <h3 class="section-title">🛠️ Manuel UART Test</h3>
+            <p class="page-description">
+                dsPIC33EP'ye manuel komut gönderebilir ve yanıtını görebilirsiniz.
+            </p>
+            
+            <form id="manualTestForm" class="settings-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="manualCommand">Test Komutu</label>
+                        <input type="text" 
+                               id="manualCommand" 
+                               name="manualCommand" 
+                               placeholder="Örn: AN, 00001v, TEST, tT" 
+                               autocomplete="off"
+                               maxlength="20">
+                        <small class="form-help">Göndermek istediğiniz komutu girin</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Hızlı Komutlar</label>
+                        <div class="quick-commands">
+                            <button type="button" class="btn secondary small" data-cmd="AN">AN (Sayı)</button>
+                            <button type="button" class="btn secondary small" data-cmd="00001v">00001v</button>
+                            <button type="button" class="btn secondary small" data-cmd="TEST">TEST</button>
+                            <button type="button" class="btn secondary small" data-cmd="D">D</button>
+                            <button type="button" class="btn secondary small" data-cmd="tT">tT (Temizle)</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn primary">
+                        <span class="btn-text">📤 Komut Gönder</span>
+                        <div class="btn-loader"></div>
+                    </button>
+                    <button type="button" class="btn secondary" id="clearManualTest">
+                        🗑️ Temizle
+                    </button>
+                </div>
+            </form>
+            
+            <div id="manualTestResult" class="test-results" style="display: none;">
+                <h4>📡 Manuel Test Sonucu</h4>
+                <div id="manualTestContent"></div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h4>💡 Arıza Verisi Format Bilgisi</h4>
+            <ul>
+                <li><strong>AN Komutu:</strong> Sistemdeki toplam arıza sayısını döndürür (örn: "050" = 49 arıza)</li>
+                <li><strong>tT Komutu:</strong> dsPIC33EP üzerindeki tüm arıza kayıtlarını siler (DİKKAT: Geri alınamaz!)</li>
+                <li><strong>Arıza Adresleri:</strong> 00001v'den başlayarak sırayla tüm arızalar çekilir</li>
+                <li><strong>Pin Numarası:</strong> 01-08 (Çıkış Pinleri), 09-10 (HEX: Giriş Pinleri)</li>
+                <li><strong>Tarih Format:</strong> YYAAGGHHMMAS (Yıl/Ay/Gün/Saat/Dakika/Saniye)</li>
+                <li><strong>Milisaniye:</strong> 3 hex karakter (0-FFF)</li>
+                <li><strong>Süre:</strong> 5 hex karakter (XX.XXX saniye formatında)</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Progress Bar Styles */
+.progress-container {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    margin-top: var(--spacing-md);
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.progress-header span {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+#progressPercent {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.progress-bar-wrapper {
+    height: 20px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    transition: width 300ms ease-out;
+    border-radius: var(--radius-full);
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.progress-stats {
+    text-align: center;
+    margin-top: var(--spacing-sm);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.progress-stats span {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Fault Table Stilleri */
+.fault-table-container {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    margin-top: var(--spacing-md);
+}
+
+.fault-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+}
+
+.fault-table th {
+    background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+    color: var(--text-primary);
+    font-weight: 600;
+    padding: var(--spacing-md);
+    text-align: left;
+    border-bottom: 2px solid var(--border-primary);
+    white-space: nowrap;
+}
+
+.fault-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid var(--border-primary);
+    vertical-align: middle;
+}
+
+.fault-table tbody tr:hover {
+    background: var(--bg-secondary);
+}
+
+.fault-table tbody tr.new-row {
+    animation: slideInLeft 0.3s ease-out;
+}
+
+.fault-table .empty-row td {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-secondary);
+}
+
+.fault-table .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.fault-table .empty-icon {
+    font-size: 2rem;
+    opacity: 0.7;
+}
+
+/* Arıza numarası badge */
+.fault-number-badge {
+    background: var(--primary);
+    color: white;
+    padding: 2px 6px;
+    border-radius: var(--radius-full);
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* Pin Type Badges */
+.pin-badge {
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.pin-badge.output {
+    background: rgba(72, 187, 120, 0.2);
+    color: var(--success);
+    border: 1px solid var(--success);
+}
+
+.pin-badge.input {
+    background: rgba(66, 153, 225, 0.2);
+    color: var(--info);
+    border: 1px solid var(--info);
+}
+
+/* Duration formatı */
+.duration-cell {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* Raw data cell */
+.raw-data-cell {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: help;
+}
+
+.raw-data-cell:hover {
+    color: var(--text-primary);
+}
+
+/* Filter select */
+.filter-select {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-sm);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+}
+
+/* Export Buttons */
+.section-controls .btn {
+    margin-left: var(--spacing-sm);
+}
+
+/* Delete Button Special Style */
+.btn.danger {
+    background: linear-gradient(135deg, var(--error), #e53e3e);
+    color: white;
+}
+
+.btn.danger:hover {
+    box-shadow: 0 4px 12px rgba(245, 101, 101, 0.4);
+    transform: translateY(-1px);
+}
+
+/* Loading overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-content {
+    background: var(--bg-primary);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .fault-table {
+        font-size: 0.75rem;
+    }
+    
+    .fault-table th,
+    .fault-table td {
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+    
+    .section-controls {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .section-controls .btn {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .raw-data-cell {
+        max-width: 80px;
+    }
+    
+    .control-buttons {
+        flex-direction: column;
+    }
+    
+    .control-buttons .btn {
+        width: 100%;
+    }
+}
+
+.btn.warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.btn.success {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+#pauseResumeBtn, #stopBtn {
+    margin-left: 0.5rem;
+}
+
+.fault-row.new-row {
+    animation: highlightNew 0.5s ease-out;
+}
+
+@keyframes highlightNew {
+    from {
+        background-color: rgba(72, 187, 120, 0.3);
+    }
+    to {
+        background-color: transparent;
+    }
+}
+</style>
