@@ -55,7 +55,7 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-// Her 5 dakikada bir session'ı canlı tut
+// Her 2 dakikada bir session'ı canlı tut
 let sessionKeepaliveInterval = null;
 
 function startSessionKeepalive() {
@@ -63,23 +63,23 @@ function startSessionKeepalive() {
     if (sessionKeepaliveInterval) {
         clearInterval(sessionKeepaliveInterval);
     }
-    
-    // Her 5 dakikada bir basit bir API çağrısı yap
+
+    // Her 2 dakikada bir session yenile
     sessionKeepaliveInterval = setInterval(async () => {
         try {
-            const response = await fetch('/api/device-info', {
+            const response = await fetch('/api/status', {
                 headers: {
                     'Authorization': `Bearer ${state.token}`
                 }
             });
-            
+
             if (response.ok) {
-                console.log('🔄 Session keepalive');
+                console.log('🔄 Session keepalive - oturum yenilendi');
             }
         } catch (error) {
             // Sessizce başarısız ol
         }
-    }, 300000); // 5 dakika
+    }, 120000); // 2 dakika
 }
 
     // --- 2. SAYFA BAŞLATMA FONKSİYONLARI ---
@@ -2113,57 +2113,57 @@ async function fetchAllFaultsReliable() {
             updateElement('progressText', 
                 `Arıza ${faultNo}/${totalFaultCount} çekiliyor...`);
             
-            // Arızayı çek (maksimum 5 deneme)
+            // Arızayı çek (maksimum 3 deneme)
             let fault = null;
             let attempts = 0;
-            const maxAttempts = 5;
-            
+            const maxAttempts = 3;
+
             while (attempts < maxAttempts && !fault) {
                 attempts++;
-                
+
                 if (attempts > 1) {
                     console.log(`🔄 Deneme ${attempts}/${maxAttempts} - Arıza ${faultNo}`);
-                    updateElement('progressText', 
+                    updateElement('progressText',
                         `Arıza ${faultNo} - Deneme ${attempts}/${maxAttempts}`);
-                    
-                    // Her denemede artan bekleme süresi
-                    await new Promise(resolve => setTimeout(resolve, 500 * attempts));
+
+                    // Hızlı bekleme (100ms × deneme)
+                    await new Promise(resolve => setTimeout(resolve, 100 * attempts));
                 }
-                
+
                 // Arızayı çek
                 fault = await getSingleFaultSafe(faultNo);
-                
+
                 if (!fault && attempts < maxAttempts) {
-                    // Başarısızsa buffer'ı temizle ve bekle
+                    // Başarısızsa buffer'ı temizle
                     clearUARTBufferJS();
-                    await new Promise(resolve => setTimeout(resolve, 300));
+                    await new Promise(resolve => setTimeout(resolve, 100));
                 }
             }
-            
+
             if (fault) {
                 successCount++;
                 consecutiveFailures = 0;
                 fault.displayOrder = faultNo;
                 fault.faultNo = faultNo;
                 faultRecords.push(fault);
-                
+
                 // Hemen tabloya ekle (her kayıt anında görünsün)
                 addSingleFaultToTable(fault, faultNo);
-                
+
                 console.log(`✅ Arıza ${faultNo} başarıyla alındı`);
-                
-                // Her başarılı çekimden sonra kısa bekleme
-                await new Promise(resolve => setTimeout(resolve, 300));
-                
+
+                // Çok kısa bekleme
+                await new Promise(resolve => setTimeout(resolve, 100));
+
             } else {
                 failCount++;
                 consecutiveFailures++;
                 console.error(`❌ Arıza ${faultNo} alınamadı (${maxAttempts} deneme başarısız)`);
-                
-                // Çok fazla ardışık hata varsa biraz daha bekle
+
+                // Çok fazla ardışık hata varsa kısa bekle
                 if (consecutiveFailures > 3) {
-                    console.log('⚠️ Ardışık hatalar, 2 saniye bekleniyor...');
-                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    console.log('⚠️ Ardışık hatalar, 500ms bekleniyor...');
+                    await new Promise(resolve => setTimeout(resolve, 500));
                 }
             }
             
@@ -2220,10 +2220,10 @@ async function getSingleFaultSafe(faultNo) {
         const command = faultNo.toString().padStart(5, '0') + 'v';
         const formData = new URLSearchParams();
         formData.append('command', command);
-        
+
         // Daha uzun timeout
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 saniye
+        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 saniye
         
         const response = await fetch('/api/uart/send', {
             method: 'POST',
