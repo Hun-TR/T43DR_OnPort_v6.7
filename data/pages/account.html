@@ -1,0 +1,73 @@
+<header class="topbar">
+    <div class="topbar-left">
+        <h2 id="pageTitle">Hesap Ayarları</h2>
+        <span class="breadcrumb">Ana Sayfa / Hesap Ayarları</span>
+    </div>
+    <div class="topbar-right">
+        <div class="datetime-display">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+            <span id="currentDateTime">--:--:--</span>
+        </div>
+        <button class="notification-btn" id="notificationBtn">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+            <span class="notification-badge" id="notificationCount">0</span>
+        </button>
+    </div>
+</header>
+<div class="dashboard-container">
+    <div class="status-card">
+        <div class="page-header">
+            <h1>👤 Cihaz ve Hesap Ayarları</h1>
+            <p class="page-description">Cihaz bilgilerini ve kullanıcı hesabını yönetin. Değişiklikler anında kaydedilir.</p>
+        </div>
+        <div id="message-container"></div>
+        <form id="accountForm" class="settings-form">
+            <div class="settings-section">
+                <h3 class="section-title">🔧 Cihaz Ayarları</h3>
+                <div class="form-group">
+                    <label for="deviceName" class="required">Cihaz Adı</label>
+                    <input type="text" id="deviceName" name="deviceName" required placeholder="Örn: TEIAS-EKLIM-001" autocomplete="off">
+                    <small class="form-help">Cihazınızı tanımlayacak benzersiz bir isim girin</small>
+                </div>
+                <div class="form-group">
+                    <label for="tmName">Trafo Merkezi Adı</label>
+                    <input type="text" id="tmName" name="tmName" placeholder="Örn: Ankara 154kV TM" autocomplete="off">
+                    <small class="form-help">Bu cihazın bağlı olduğu trafo merkezinin adı</small>
+                </div>
+            </div>
+            <hr class="section-divider">
+            <div class="settings-section">
+                <h3 class="section-title">👤 Kullanıcı Hesap Ayarları</h3>
+                <div class="form-group">
+                    <label for="username" class="required">Kullanıcı Adı</label>
+                    <input type="text" id="username" name="username" required autocomplete="username" autocapitalize="off">
+                    <small class="form-help">Sisteme giriş yapmak için kullanacağınız kullanıcı adı (3-30 karakter, sadece harf, rakam, tire, alt çizgi)</small>
+                </div>
+                <div class="password-section">
+                    <div class="form-group">
+                        <label for="password">Yeni Şifre</label>
+                        <input type="password" id="password" name="password" placeholder="Değiştirmeyecekseniz boş bırakın" autocomplete="new-password">
+                        <small class="form-help">En az 6 karakter olmalıdır</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Yeni Şifre Tekrar</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Yeni şifreyi tekrar girin" autocomplete="new-password">
+                        <small class="form-help">Şifre doğrulaması için tekrar girin</small>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn primary" id="saveBtn"><span class="btn-text">💾 Ayarları Kaydet</span><div class="btn-loader"></div></button>
+                <button type="button" class="btn secondary" id="resetBtn">🔄 Sıfırla</button>
+            </div>
+        </form>
+        <div class="info-box">
+            <h4>ℹ️ Önemli Bilgiler</h4>
+            <ul>
+                <li>Cihaz adı değişiklikleri sistem yeniden başlatıldığında etkin olur</li>
+                <li>Şifre değiştirirseniz tekrar giriş yapmanız gerekecektir</li>
+                <li>Tüm değişiklikler otomatik olarak kaydedilir</li>
+            </ul>
+        </div>
+    </div>
+</div>

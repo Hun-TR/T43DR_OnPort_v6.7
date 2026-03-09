@@ -1,0 +1,69 @@
+<header class="topbar">
+    <div class="topbar-left">
+        <h2 id="pageTitle">Yedekleme ve Geri Yükleme</h2>
+        <span class="breadcrumb">Ana Sayfa / Yedekleme</span>
+    </div>
+    <div class="topbar-right">
+        <div class="datetime-display">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+            <span id="currentDateTime">--:--:--</span>
+        </div>
+        <button class="notification-btn" id="notificationBtn">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+            <span class="notification-badge" id="notificationCount">0</span>
+        </button>
+    </div>
+</header>
+<div class="dashboard-container">
+    <div class="status-card">
+        <div class="page-header">
+            <h1>📥 Yedekleme ve Geri Yükleme</h1>
+            <p class="page-description">Sistem ayarlarınızı yedekleyin veya daha önceki bir yedeği geri yükleyin.</p>
+        </div>
+        <div id="message-container"></div>
+        
+        <div class="settings-section">
+            <h3 class="section-title">⚙️ Ayarları Yedekle</h3>
+            <p class="page-description" style="margin-bottom: 1rem;">
+                Mevcut tüm sistem yapılandırmasını (ağ, cihaz, kullanıcı ayarları vb.) bir JSON dosyası olarak indirin.
+                Bu dosyayı güvenli bir yerde saklayın.
+            </p>
+            <button id="downloadBackupBtn" class="btn primary">
+                <span class="btn-icon">📥</span>
+                <span class="btn-text">Yedek Dosyasını İndir</span>
+            </button>
+        </div>
+
+        <hr class="section-divider">
+
+        <div class="settings-section">
+            <h3 class="section-title">🔄 Ayarları Geri Yükle</h3>
+            <p class="page-description" style="margin-bottom: 1rem;">
+                Daha önce oluşturulmuş bir yedek dosyasını (.json) yükleyerek sistem ayarlarını geri yükleyin.
+                <strong>Dikkat:</strong> Bu işlem sonrası cihaz yeniden başlatılacaktır.
+            </p>
+            <form id="uploadBackupForm" class="settings-form" style="padding:0; border: none;">
+                <div class="form-group">
+                    <label for="backupFile" class="required">Yedek Dosyasını Seçin (.json)</label>
+                    <input type="file" id="backupFile" name="backupFile" accept=".json" required>
+                </div>
+                <div class="form-actions" style="padding-top:0; border-top: none;">
+                    <button type="submit" class="btn danger" id="restoreBtn">
+                        <span class="btn-text">⬆️ Geri Yükle ve Yeniden Başlat</span>
+                        <div class="btn-loader"></div>
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="info-box">
+            <h4>💡 Önemli Bilgiler</h4>
+            <ul>
+                <li>Yedekleme işlemi şifre bilgisini içermez, sadece kullanıcı adını içerir.</li>
+                <li>Geri yükleme işlemi mevcut ayarların üzerine yazılacaktır.</li>
+                <li>Sadece bu cihaz modeli için oluşturulmuş yedek dosyalarını kullanın.</li>
+                <li>İşlem sonrası cihazın yeni IP adresi ile erişmeniz gerekebilir.</li>
+            </ul>
+        </div>
+    </div>
+</div>

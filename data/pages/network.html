@@ -1,0 +1,252 @@
+<!-- data/pages/network.html - Sadece Statik IP Versiyonu -->
+<header class="topbar">
+    <div class="topbar-left">
+        <h2 id="pageTitle">Ağ Yapılandırması</h2>
+        <span class="breadcrumb">Ana Sayfa / Ağ Ayarları</span>
+    </div>
+    <div class="topbar-right">
+        <div class="datetime-display">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+            <span id="currentDateTime">--:--:--</span>
+        </div>
+        <button class="notification-btn" id="notificationBtn">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+            <span class="notification-badge" id="notificationCount">0</span>
+        </button>
+    </div>
+</header>
+
+<div class="dashboard-container">
+    <div class="status-card">
+        <div class="page-header">
+            <h1>🌐 Ağ Yapılandırması</h1>
+            <p class="page-description">Cihazın statik IP adresini ve ağ ayarlarını yönetin.</p>
+        </div>
+        
+        <div id="message-container"></div>
+        
+        <!-- Mevcut Ağ Durumu -->
+        <div class="status-section">
+            <div class="section-header">
+                <h3>📊 Mevcut Ağ Durumu</h3>
+                <div class="section-controls">
+                    <button class="btn secondary small" id="networkTestBtn">
+                        <span class="btn-icon">🔍</span>
+                        <span class="btn-text">Bağlantı Testi</span>
+                    </button>
+                    <button class="btn info small" id="refreshNetworkBtn">
+                        <span class="btn-icon">🔄</span>
+                        <span class="btn-text">Yenile</span>
+                    </button>
+                </div>
+            </div>
+            <div class="network-status">
+                <div class="status-item" id="connectionStatusCard">
+                    <div class="status-icon">🔗</div>
+                    <div class="status-label">Bağlantı Durumu</div>
+                    <div id="ethStatus" class="status-value">Kontrol ediliyor...</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon">📍</div>
+                    <div class="status-label">IP Adresi</div>
+                    <div id="currentIP" class="status-value">Yükleniyor...</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon">🚀</div>
+                    <div class="status-label">Link Hızı</div>
+                    <div id="linkSpeed" class="status-value">-- Mbps</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon">🌐</div>
+                    <div class="status-label">Gateway</div>
+                    <div id="currentGateway" class="status-value">Yükleniyor...</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon">🔍</div>
+                    <div class="status-label">DNS Sunucu</div>
+                    <div id="currentDNS" class="status-value">Yükleniyor...</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon">📱</div>
+                    <div class="status-label">MAC Adresi</div>
+                    <div id="macAddress" class="status-value">Yükleniyor...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ağ Ayarları Formu - DHCP Kaldırıldı, Sadece Statik IP -->
+        <form id="networkForm" class="settings-form">
+            <div class="settings-section">
+                <h3 class="section-title">⚙️ Statik IP Yapılandırması</h3>
+                
+                <!-- Gizli input - her zaman static gönderecek -->
+                <input type="hidden" name="ipMode" value="static">
+                
+                <!-- Statik IP Ayarları - Her zaman görünür -->
+                <div id="staticSettings" class="static-settings">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="staticIP" class="required">IP Adresi</label>
+                            <input type="text" id="staticIP" name="staticIP" 
+                                   placeholder="Örn: 192.168.1.100" 
+                                   autocomplete="off"
+                                   maxlength="15"
+                                   required>
+                            <small class="form-help">Bu cihazın sabit IP adresi</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="gateway" class="required">Gateway (Ağ Geçidi)</label>
+                            <input type="text" id="gateway" name="gateway" 
+                                   placeholder="Örn: 192.168.1.1"
+                                   autocomplete="off"
+                                   maxlength="15"
+                                   required>
+                            <small class="form-help">Router'ın IP adresi</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="subnet" class="required">Subnet Mask</label>
+                            <input type="text" id="subnet" name="subnet" 
+                                   placeholder="255.255.255.0"
+                                   autocomplete="off"
+                                   maxlength="15"
+                                   required>
+                            <small class="form-help">Alt ağ maskesi</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dns1" class="required">Birincil DNS</label>
+                            <input type="text" id="dns1" name="dns1" 
+                                   placeholder="8.8.8.8"
+                                   autocomplete="off"
+                                   maxlength="15"
+                                   required>
+                            <small class="form-help">Ana DNS sunucusu</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dns2">İkincil DNS (Opsiyonel)</label>
+                            <input type="text" id="dns2" name="dns2" 
+                                   placeholder="8.8.4.4"
+                                   autocomplete="off"
+                                   maxlength="15">
+                            <small class="form-help">Yedek DNS sunucusu</small>
+                        </div>
+                        <div class="form-group">
+                            <!-- Boş alan - layout için -->
+                        </div>
+                    </div>
+
+                    <!-- IP Validation Indicator -->
+                    <div id="ipValidation" class="validation-info" style="display: none;">
+                        <div class="validation-item" id="ipValidItem">
+                            <span class="validation-icon">❓</span>
+                            <span class="validation-text">IP Adresi: Kontrol ediliyor...</span>
+                        </div>
+                        <div class="validation-item" id="gatewayValidItem">
+                            <span class="validation-icon">❓</span>
+                            <span class="validation-text">Gateway: Kontrol ediliyor...</span>
+                        </div>
+                        <div class="validation-item" id="subnetValidItem">
+                            <span class="validation-icon">❓</span>
+                            <span class="validation-text">Subnet: Kontrol ediliyor...</span>
+                        </div>
+                        <div class="validation-item" id="dnsValidItem">
+                            <span class="validation-icon">❓</span>
+                            <span class="validation-text">DNS: Kontrol ediliyor...</span>
+                        </div>
+                    </div>
+
+                    <!-- Quick Preset Area -->
+                    <div class="network-presets" style="margin: 1rem 0; padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius-md); border: 1px solid var(--border-primary);">
+                        <h4 style="margin-bottom: 0.5rem; color: var(--text-primary); font-size: 0.875rem;">🚀 Hızlı IP Ayarları</h4>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            <button type="button" class="preset-network-btn btn secondary small" data-ip="192.168.1.100" data-gw="192.168.1.1" data-subnet="255.255.255.0" data-dns="8.8.8.8">
+                                🏠 Ev Ağı (192.168.1.x)
+                            </button>
+                            <button type="button" class="preset-network-btn btn secondary small" data-ip="192.168.0.100" data-gw="192.168.0.1" data-subnet="255.255.255.0" data-dns="1.1.1.1">
+                                🏢 Ofis Ağı (192.168.0.x)
+                            </button>
+                            <button type="button" class="preset-network-btn btn secondary small" data-ip="10.0.0.100" data-gw="10.0.0.1" data-subnet="255.255.255.0" data-dns="8.8.4.4">
+                                🏭 Kurumsal (10.0.0.x)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button type="submit" class="btn primary" id="saveNetworkBtn">
+                    <span class="btn-text">💾 Ayarları Kaydet ve Yeniden Başlat</span>
+                    <div class="btn-loader"></div>
+                </button>
+                <button type="button" class="btn secondary" id="resetNetworkBtn">
+                    🔄 Varsayılanlara Sıfırla
+                </button>
+            </div>
+        </form>
+
+        <!-- Network Test Results Area -->
+        <div id="networkTestResults" class="network-test-results" style="display: none;">
+            <h4>🔍 Bağlantı Test Sonuçları</h4>
+            <div id="testResultsContent">
+                <!-- Test sonuçları buraya gelecek -->
+            </div>
+        </div>
+
+        <!-- Advanced Network Info -->
+        <details class="network-advanced">
+            <summary>🔧 Gelişmiş Ağ Bilgileri</summary>
+            <div class="network-detail">
+                <div class="detail-item">
+                    <div class="detail-label">Hostname</div>
+                    <div class="detail-value" id="hostname">teias-eklim</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Link Status</div>
+                    <div class="detail-value" id="linkStatus">--</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Duplex Mode</div>
+                    <div class="detail-value" id="duplexMode">--</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">MTU Size</div>
+                    <div class="detail-value" id="mtuSize">1500</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Last Change</div>
+                    <div class="detail-value" id="lastNetworkChange">--</div>
+                </div>
+            </div>
+        </details>
+
+        <!-- Info ve Warning Boxes -->
+        <div class="info-box">
+            <h4>💡 Statik IP Yapılandırması İpuçları</h4>
+            <ul>
+                <li><strong>IP Adresi:</strong> Ağınızda kullanılmayan bir IP seçin.</li>
+                <li><strong>Gateway:</strong> Genellikle router'ın IP adresidir (192.168.1.1 veya 192.168.0.1).</li>
+                <li><strong>Subnet Mask:</strong> Çoğu ev ve küçük ofis ağı için 255.255.255.0 kullanılır.</li>
+                <li><strong>DNS Sunucuları:</strong> Google (8.8.8.8), Cloudflare (1.1.1.1) hızlı seçeneklerdir.</li>
+            </ul>
+        </div>
+
+        <div class="warning-box">
+            <h4>⚠️ Önemli Uyarılar</h4>
+            <ul>
+                <li><strong>IP değiştirme:</strong> Ayarları kaydettikten sonra yeni IP adresiyle erişmeniz gerekecek</li>
+                <li><strong>IP Çakışması:</strong> Seçtiğiniz IP'nin ağda başka bir cihaz tarafından kullanılmadığından emin olun</li>
+                <li><strong>Yeniden başlatma:</strong> Değişiklikler cihaz restart sonrası etkin olur</li>
+                <li><strong>Alternatif erişim:</strong> IP değişse bile <code>teias-eklim.local</code> ile erişebilirsiniz</li>
+                <li><strong>Factory Reset:</strong> Ağ ayarları yanlış giderse fiziksel reset gerekebilir</li>
+            </ul>
+        </div>
+    </div>
+</div>
