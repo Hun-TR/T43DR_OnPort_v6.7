@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UART BaudRate Ayarları</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="status-card">
+            <div class="page-header">
+                <h1>⚙️ UART BaudRate Ayarları</h1>
+                <p class="page-description">Arka port (dsPIC33EP) ile olan seri iletişim hızını ayarlayın ve kontrol edin.</p>
+            </div>
+
+            <div id="message-container"></div>
+
+            <div class="status-section">
+                <h3>📊 Mevcut İletişim Durumu</h3>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <span class="label">dsPIC BaudRate:</span>
+                        <span id="currentBaudRate" class="value highlight">Bilinmiyor</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label">ESP32 BaudRate:</span>
+                        <span class="value">250000 bps (Sabit)</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label">Son Güncelleme:</span>
+                        <span id="lastUpdate" class="value">-</span>
+                    </div>
+                </div>
+                
+                <div class="form-actions" style="margin-top: 20px; padding-top: 0; border-top: none;">
+                    <button type="button" class="btn info" id="checkBaudBtn">
+                        <span class="btn-text">🔍 Mevcut BaudRate'i Sorgula</span>
+                        <div class="btn-loader"></div>
+                    </button>
+                </div>
+            </div>
+
+            <form id="baudrateForm" class="settings-form">
+                <div class="settings-section">
+                    <h3 class="section-title">🔧 BaudRate Değiştir</h3>
+                    <div class="baudrate-options">
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="baud_9600" name="baud" value="9600">
+                                <label for="baud_9600">
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-text">9600 bps</span>
+                                    <span class="radio-desc">Düşük hız - Uzun mesafe</span>
+                                </label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="baud_19200" name="baud" value="19200">
+                                <label for="baud_19200">
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-text">19200 bps</span>
+                                    <span class="radio-desc">Orta hız - Kararlı iletişim</span>
+                                </label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="baud_38400" name="baud" value="38400">
+                                <label for="baud_38400">
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-text">38400 bps</span>
+                                    <span class="radio-desc">Hızlı - Çoğu uygulama için ideal</span>
+                                </label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="baud_57600" name="baud" value="57600">
+                                <label for="baud_57600">
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-text">57600 bps</span>
+                                    <span class="radio-desc">Yüksek hız - Kısa mesafe</span>
+                                </label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="baud_115200" name="baud" value="115200">
+                                <label for="baud_115200">
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-text">115200 bps</span>
+                                    <span class="radio-desc">Maksimum hız - Kablo kalitesi önemli</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn primary" id="saveBaudBtn">
+                        <span class="btn-text">⚙️ BaudRate'i Değiştir</span>
+                        <div class="btn-loader"></div>
+                    </button>
+                </div>
+            </form>
+
+            <div class="warning-box">
+                <h4>⚠️ Önemli Bilgiler</h4>
+                <ul>
+                    <li><strong>ESP32 her zaman 250000 bps hızında çalışır</strong> - Bu değer sabittir</li>
+                    <li>Bu sayfadan sadece dsPIC33EP tarafındaki baudrate ayarı değiştirilir</li>
+                    <li>dsPIC ve ESP32'nin haberleşebilmesi için protokol dönüşümü yapılmaktadır</li>
+                    <li>Değişiklikten sonra "Mevcut BaudRate'i Sorgula" butonunu kullanarak doğrulayın</li>
+                    <li>Sorun yaşanması durumunda cihazı yeniden başlatmayı deneyin</li>
+                </ul>
+            </div>
+        </div>
+    </div>    
+</body>
+</html>

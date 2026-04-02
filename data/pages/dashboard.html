@@ -1,0 +1,740 @@
+<header class="topbar">
+    <div class="topbar-left">
+        <h2 id="pageTitle">Sistem Gösterge Paneli</h2>
+        <span class="breadcrumb">Ana Sayfa / Gösterge Paneli</span>
+    </div>
+    <div class="topbar-right">
+        <div class="datetime-display">
+            <svg class="icon" viewBox="0 0 24 24">
+                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+            </svg>
+            <span id="currentDateTime">--:--:--</span>
+        </div>
+        <button class="notification-btn" id="notificationBtn">
+            <svg class="icon" viewBox="0 0 24 24">
+                <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+            </svg>
+            <span class="notification-badge" id="notificationCount">0</span>
+        </button>
+    </div>
+</header>
+
+<div class="dashboard-container">
+    <!-- Üst Bilgi Kartları -->
+    <div class="status-grid">
+        <div class="status-card">
+            <div class="card-header">
+                <svg class="card-icon" viewBox="0 0 24 24"><path d="M12 2l-5.5 9h11z M12 22l5.5-9h-11z M3.5 9l5.5 9v-11z M20.5 9l-5.5 9v-11z"/></svg>
+                <h3>Sistem Durumu</h3>
+            </div>
+            <div class="card-body">
+                <div class="metric"><span class="metric-label">Ethernet</span><span class="metric-value" id="ethernetStatus"><span class="status-indicator active"></span> Bağlı</span></div>
+                <div class="metric"><span class="metric-label">UART</span><span class="metric-value" id="uartStatus"><span class="status-indicator active"></span> Aktif</span></div>
+                <div class="metric"><span class="metric-label">Sistem Saati</span><span class="metric-value" id="systemClock">--:--:--</span></div>
+            </div>
+        </div>
+        
+        <div class="status-card">
+            <div class="card-header">
+                <svg class="card-icon" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+                <h3>Cihaz Bilgileri</h3>
+            </div>
+            <div class="card-body">
+                <div class="metric"><span class="metric-label">Cihaz Adı</span><span class="metric-value" id="deviceName">TEİAŞ EKLİM</span></div>
+                <div class="metric"><span class="metric-label">Trafo Merkezi</span><span class="metric-value" id="tmName">Ankara TM</span></div>
+                <div class="metric"><span class="metric-label">IP Adresi</span><span class="metric-value" id="deviceIP">192.168.1.160</span></div>
+            </div>
+        </div>
+        
+        <div class="status-card">
+            <div class="card-header">
+                <svg class="card-icon" viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.13-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                <h3>Performans</h3>
+            </div>
+            <div class="card-body">
+                <div class="metric"><span class="metric-label">Çalışma Süresi</span><span class="metric-value" id="uptime">00:00:00</span></div>
+                <div class="metric"><span class="metric-label">Son Güncelleme</span><span class="metric-value" id="lastUpdate">--</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LED Panel -->
+    <div class="led-panel-container">
+        <div class="panel-header">
+            <h3>
+                <svg class="icon" viewBox="0 0 24 24" style="width: 24px; height: 24px; fill: currentColor;">
+                    <path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+                </svg>
+                I/O Durum Göstergesi
+            </h3>
+            <div class="panel-controls">
+                <button class="btn small info" id="refreshLedBtn">
+                    <span class="btn-icon">🔄</span>
+                    <span class="btn-text">Yenile</span>
+                </button>
+                <div class="auto-refresh-toggle">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="autoRefreshToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">Otomatik Yenileme</span>
+                </div>
+            </div>
+        </div>
+
+        <svg id="ledPanel" viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+            <!-- Arka plan -->
+            <defs>
+                <linearGradient id="panelGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#2d3748;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1a202c;stop-opacity:1" />
+                </linearGradient>
+                
+                <!-- LED glow efektleri -->
+                <filter id="ledGlow">
+                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                    <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+                
+                <!-- LED blink animasyonları -->
+                <animate id="blinkAnimation" attributeName="opacity" values="1;0.3;1" dur="0.8s" repeatCount="indefinite"/>
+                <animate id="blinkFastAnimation" attributeName="opacity" values="1;0.2;1" dur="0.5s" repeatCount="indefinite"/>
+            </defs>
+
+            <!-- Panel arka planı -->
+            <rect x="10" y="10" width="1180" height="580" rx="20" fill="url(#panelGradient)" stroke="#4a5568" stroke-width="2"/>
+            
+            <!-- Sol Bölüm - Etiketler -->
+            <g id="leftLabels">
+                <text x="50" y="80" fill="#cbd5e0" font-size="18" font-weight="bold">Sağlam</text>
+                <text x="50" y="140" fill="#cbd5e0" font-size="16">Genel Alarm</text>
+                <text x="50" y="200" fill="#cbd5e0" font-size="16">NTP Alarm</text>
+                <text x="50" y="260" fill="#cbd5e0" font-size="16">RS232 Alarm</text>
+                <text x="50" y="320" fill="#cbd5e0" font-size="16">DC1 Alarm</text>
+                <text x="50" y="380" fill="#cbd5e0" font-size="16">DC2 Alarm</text>
+            </g>
+
+            <!-- Sol LED'ler (B1-B6) -->
+            <g id="leftLeds">
+                <!-- B1 - Sağlam (Yeşil LED - Sürekli Blink) -->
+                <circle id="led_B1" cx="220" cy="75" r="18" fill="#1a472a" stroke="#2d5016" stroke-width="2"/>
+                <circle id="led_B1_inner" cx="220" cy="75" r="14" fill="#2d5016" filter="url(#ledGlow)">
+                    <animate attributeName="opacity" values="1;0.3;1" dur="1s" repeatCount="indefinite"/>
+                </circle>
+                <text x="220" y="115" fill="#a0aec0" font-size="14" text-anchor="middle">B1</text>
+                
+                <!-- B2 - Genel Alarm -->
+                <circle id="led_B2" cx="220" cy="135" r="18" fill="#1a472a" stroke="#2d5016" stroke-width="2"/>
+                <circle id="led_B2_inner" cx="220" cy="135" r="14" fill="#2d5016" filter="url(#ledGlow)"/>
+                <text x="220" y="175" fill="#a0aec0" font-size="14" text-anchor="middle">B2</text>
+                
+                <!-- B3 - NTP Alarm -->
+                <circle id="led_B3" cx="220" cy="195" r="18" fill="#1a472a" stroke="#2d5016" stroke-width="2"/>
+                <circle id="led_B3_inner" cx="220" cy="195" r="14" fill="#2d5016" filter="url(#ledGlow)"/>
+                <text x="220" y="235" fill="#a0aec0" font-size="14" text-anchor="middle">B3</text>
+                
+                <!-- B4 - RS232 Alarm -->
+                <circle id="led_B4" cx="220" cy="255" r="18" fill="#1a472a" stroke="#2d5016" stroke-width="2"/>
+                <circle id="led_B4_inner" cx="220" cy="255" r="14" fill="#2d5016" filter="url(#ledGlow)"/>
+                <text x="220" y="295" fill="#a0aec0" font-size="14" text-anchor="middle">B4</text>
+                
+                <!-- B5 - DC1 Alarm -->
+                <circle id="led_B5" cx="220" cy="315" r="18" fill="#1a472a" stroke="#2d5016" stroke-width="2"/>
+                <circle id="led_B5_inner" cx="220" cy="315" r="14" fill="#2d5016" filter="url(#ledGlow)"/>
+                <text x="220" y="355" fill="#a0aec0" font-size="14" text-anchor="middle">B5</text>
+                
+                <!-- B6 - DC2 Alarm -->
+                <circle id="led_B6" cx="220" cy="375" r="18" fill="#1a472a" stroke="#2d5016" stroke-width="2"/>
+                <circle id="led_B6_inner" cx="220" cy="375" r="14" fill="#2d5016" filter="url(#ledGlow)"/>
+                <text x="220" y="415" fill="#a0aec0" font-size="14" text-anchor="middle">B6</text>
+            </g>
+
+            <!-- Orta Bölüm - INPUT/OUTPUT Başlıkları -->
+            <g id="centerSection">
+                <!-- INPUT başlığı -->
+                <rect x="420" y="40" width="160" height="40" rx="5" fill="#4a5568" stroke="#718096" stroke-width="1"/>
+                <text x="500" y="67" fill="#f7fafc" font-size="20" font-weight="bold" text-anchor="middle">INPUT</text>
+                
+                <!-- OUTPUT başlığı -->
+                <rect x="900" y="40" width="160" height="40" rx="5" fill="#4a5568" stroke="#718096" stroke-width="1"/>
+                <text x="980" y="67" fill="#f7fafc" font-size="20" font-weight="bold" text-anchor="middle">OUTPUT</text>
+            </g>
+
+            <!-- INPUT LED'leri (I1-I8) -->
+            <g id="inputLeds">
+                <!-- Sol Kolon: I1, I2, I3, I4 -->
+                <g id="input_col1">
+                    <!-- I1 -->
+                    <circle id="led_I1" cx="450" cy="140" r="18" fill="#3d1a1a" stroke="#5a1a1a" stroke-width="2"/>
+                    <circle id="led_I1_inner" cx="450" cy="140" r="14" fill="#5a1a1a" filter="url(#ledGlow)"/>
+                    <text x="450" y="125" fill="#a0aec0" font-size="14" text-anchor="middle">I1</text>
+                    
+                    <!-- I2 -->
+                    <circle id="led_I2" cx="450" cy="210" r="18" fill="#3d1a1a" stroke="#5a1a1a" stroke-width="2"/>
+                    <circle id="led_I2_inner" cx="450" cy="210" r="14" fill="#5a1a1a" filter="url(#ledGlow)"/>
+                    <text x="450" y="195" fill="#a0aec0" font-size="14" text-anchor="middle">I2</text>
+                    
+                    <!-- I3 -->
+                    <circle id="led_I3" cx="450" cy="280" r="18" fill="#3d1a1a" stroke="#5a1a1a" stroke-width="2"/>
+                    <circle id="led_I3_inner" cx="450" cy="280" r="14" fill="#5a1a1a" filter="url(#ledGlow)"/>
+                    <text x="450" y="265" fill="#a0aec0" font-size="14" text-anchor="middle">I3</text>
+                    
+                    <!-- I4 -->
+                    <circle id="led_I4" cx="450" cy="350" r="18" fill="#3d1a1a" stroke="#5a1a1a" stroke-width="2"/>
+                    <circle id="led_I4_inner" cx="450" cy="350" r="14" fill="#5a1a1a" filter="url(#ledGlow)"/>
+                    <text x="450" y="335" fill="#a0aec0" font-size="14" text-anchor="middle">I4</text>
+                </g>
+                
+                <!-- Sağ Kolon: I5, I6, I7, I8 -->
+                <g id="input_col2">
+                    <!-- I5 -->
+                    <circle id="led_I5" cx="550" cy="140" r="18" fill="#3d1a1a" stroke="#5a1a1a" stroke-width="2"/>
+                    <circle id="led_I5_inner" cx="550" cy="140" r="14" fill="#5a1a1a" filter="url(#ledGlow)"/>
+                    <text x="550" y="125" fill="#a0aec0" font-size="14" text-anchor="middle">I5</text>
+                    
+                    <!-- I6 -->
+                    <circle id="led_I6" cx="550" cy="210" r="18" fill="#3d1a1a" stroke="#5a1a1a" stroke-width="2"/>
+                    <circle id="led_I6_inner" cx="550" cy="210" r="14" fill="#5a1a1a" filter="url(#ledGlow)"/>
+                    <text x="550" y="195" fill="#a0aec0" font-size="14" text-anchor="middle">I6</text>
+                    
+                    <!-- I7 -->
+                    <circle id="led_I7" cx="550" cy="280" r="18" fill="#3d1a1a" stroke="#5a1a1a" stroke-width="2"/>
+                    <circle id="led_I7_inner" cx="550" cy="280" r="14" fill="#5a1a1a" filter="url(#ledGlow)"/>
+                    <text x="550" y="265" fill="#a0aec0" font-size="14" text-anchor="middle">I7</text>
+                    
+                    <!-- I8 -->
+                    <circle id="led_I8" cx="550" cy="350" r="18" fill="#3d1a1a" stroke="#5a1a1a" stroke-width="2"/>
+                    <circle id="led_I8_inner" cx="550" cy="350" r="14" fill="#5a1a1a" filter="url(#ledGlow)"/>
+                    <text x="550" y="335" fill="#a0aec0" font-size="14" text-anchor="middle">I8</text>
+                </g>
+            </g>
+
+            <!-- OUTPUT LED'leri (O1-O8) -->
+            <g id="outputLeds">
+                <!-- Sol Kolon: O1, O2, O3, O4 -->
+                <g id="output_col1">
+                    <!-- O1 -->
+                    <circle id="led_O1" cx="930" cy="140" r="18" fill="#3d1a1a" stroke="#5a1a1a" stroke-width="2"/>
+                    <circle id="led_O1_inner" cx="930" cy="140" r="14" fill="#5a1a1a" filter="url(#ledGlow)"/>
+                    <text x="930" y="125" fill="#a0aec0" font-size="14" text-anchor="middle">O1</text>
+                    
+                    <!-- O2 -->
+                    <circle id="led_O2" cx="930" cy="210" r="18" fill="#3d1a1a" stroke="#5a1a1a" stroke-width="2"/>
+                    <circle id="led_O2_inner" cx="930" cy="210" r="14" fill="#5a1a1a" filter="url(#ledGlow)"/>
+                    <text x="930" y="195" fill="#a0aec0" font-size="14" text-anchor="middle">O2</text>
+                    
+                    <!-- O3 -->
+                    <circle id="led_O3" cx="930" cy="280" r="18" fill="#3d1a1a" stroke="#5a1a1a" stroke-width="2"/>
+                    <circle id="led_O3_inner" cx="930" cy="280" r="14" fill="#5a1a1a" filter="url(#ledGlow)"/>
+                    <text x="930" y="265" fill="#a0aec0" font-size="14" text-anchor="middle">O3</text>
+                    
+                    <!-- O4 -->
+                    <circle id="led_O4" cx="930" cy="350" r="18" fill="#3d1a1a" stroke="#5a1a1a" stroke-width="2"/>
+                    <circle id="led_O4_inner" cx="930" cy="350" r="14" fill="#5a1a1a" filter="url(#ledGlow)"/>
+                    <text x="930" y="335" fill="#a0aec0" font-size="14" text-anchor="middle">O4</text>
+                </g>
+                
+                <!-- Sağ Kolon: O5, O6, O7, O8 -->
+                <g id="output_col2">
+                    <!-- O5 -->
+                    <circle id="led_O5" cx="1030" cy="140" r="18" fill="#3d1a1a" stroke="#5a1a1a" stroke-width="2"/>
+                    <circle id="led_O5_inner" cx="1030" cy="140" r="14" fill="#5a1a1a" filter="url(#ledGlow)"/>
+                    <text x="1030" y="125" fill="#a0aec0" font-size="14" text-anchor="middle">O5</text>
+                    
+                    <!-- O6 -->
+                    <circle id="led_O6" cx="1030" cy="210" r="18" fill="#3d1a1a" stroke="#5a1a1a" stroke-width="2"/>
+                    <circle id="led_O6_inner" cx="1030" cy="210" r="14" fill="#5a1a1a" filter="url(#ledGlow)"/>
+                    <text x="1030" y="195" fill="#a0aec0" font-size="14" text-anchor="middle">O6</text>
+                    
+                    <!-- O7 -->
+                    <circle id="led_O7" cx="1030" cy="280" r="18" fill="#3d1a1a" stroke="#5a1a1a" stroke-width="2"/>
+                    <circle id="led_O7_inner" cx="1030" cy="280" r="14" fill="#5a1a1a" filter="url(#ledGlow)"/>
+                    <text x="1030" y="265" fill="#a0aec0" font-size="14" text-anchor="middle">O7</text>
+                    
+                    <!-- O8 -->
+                    <circle id="led_O8" cx="1030" cy="350" r="18" fill="#3d1a1a" stroke="#5a1a1a" stroke-width="2"/>
+                    <circle id="led_O8_inner" cx="1030" cy="350" r="14" fill="#5a1a1a" filter="url(#ledGlow)"/>
+                    <text x="1030" y="335" fill="#a0aec0" font-size="14" text-anchor="middle">O8</text>
+                </g>
+            </g>
+
+            <!-- RESET/TEST Butonu -->
+            <g id="resetTestButton">
+                <rect x="520" y="480" width="160" height="60" rx="10" fill="#2d3748" stroke="#4a5568" stroke-width="2"/>
+                <text x="600" y="507" fill="#cbd5e0" font-size="14" font-weight="bold" text-anchor="middle">RESET</text>
+                <text x="600" y="527" fill="#cbd5e0" font-size="14" font-weight="bold" text-anchor="middle">TEST</text>
+                <circle cx="600" cy="545" r="8" fill="#3d1a1a" stroke="#5a1a1a" stroke-width="1"/>
+            </g>
+
+            <!-- Durum bilgisi -->
+            <text id="statusText" x="600" y="570" fill="#a0aec0" font-size="12" text-anchor="middle">Son güncelleme: --</text>
+        </svg>
+
+        <!-- LED Durumu Özeti -->
+        <div class="led-summary">
+            <div class="summary-item">
+                <span class="summary-label">Aktif INPUT:</span>
+                <span class="summary-value" id="activeInputCount">0/8</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Aktif OUTPUT:</span>
+                <span class="summary-value" id="activeOutputCount">0/8</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Ham Veri:</span>
+                <code class="summary-value" id="rawLedData">--</code>
+            </div>
+        </div>
+    </div>
+
+<!-- Sistem Geliştiricileri Bölümü -->
+<div class="developers-section">
+  <div class="developers-header">
+    <svg class="developer-icon" viewBox="0 0 24 24">
+      <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V7.3l7-3.11v8.8z" />
+    </svg>
+    <h3>Sistem Geliştiricileri</h3>
+  </div>
+
+  <div class="developers-grid">
+    <div class="developer-card">
+      <div class="developer-avatar">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 
+          1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 
+          1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+        </svg>
+      </div>
+      <h4 class="developer-name">Mehmet DEMİRBİLEK</h4>
+      <p class="developer-title">Başuzman</p>
+    </div>
+
+    <div class="developer-card">
+      <div class="developer-avatar">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 
+          1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 
+          1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+        </svg>
+      </div>
+      <h4 class="developer-name">Hüseyin ÇİFTCİ</h4>
+      <p class="developer-title">Başmühendis (G.)</p>
+    </div>
+  </div>
+
+  <div class="project-info">
+    <p class="project-description">
+      <strong>EKLİM Bakım Onarım Atölyesi</strong> tarafından
+      geliştirilen <span class="highlight">yerli ve milli</span> sistemdir.
+    </p>
+    <div class="badge-container">
+      <span class="badge badge-primary">Yerli Üretim</span>
+      <span class="badge badge-success">Milli Teknoloji</span>
+      <span class="badge badge-info">TEİAŞ</span>
+    </div>
+  </div>
+</div>
+
+<style>
+.led-panel-container {
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-md);
+    margin-top: var(--spacing-xl);
+}
+
+/* CSS Animasyonları için */
+@keyframes ledBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+@keyframes ledBlinkFast {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+}
+
+.led-blink {
+    animation: ledBlink 0.8s ease-in-out infinite;
+}
+
+.led-blink-fast {
+    animation: ledBlinkFast 0.5s ease-in-out infinite;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.panel-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.panel-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.auto-refresh-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: var(--primary);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(26px);
+}
+
+.toggle-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    user-select: none;
+}
+
+#ledPanel {
+    width: 100%;
+    height: auto;
+    max-height: 600px;
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    background: #1a202c;
+}
+
+.led-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--border-primary);
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-primary);
+}
+
+.summary-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.summary-value {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+code.summary-value {
+    font-family: 'Courier New', monospace;
+    background: var(--bg-tertiary);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .panel-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .panel-controls {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .panel-controls .btn {
+        width: 100%;
+    }
+    
+    .auto-refresh-toggle {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .led-summary {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Sistem Geliştiricileri - Açık/Koyu Mod Uyumlu */
+.developers-section {
+  background: var(--card-bg, rgba(26, 32, 44, 0.8));
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  margin-top: 2rem;
+  padding: 2.5rem;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.developers-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.developer-icon {
+  width: 28px;
+  height: 28px;
+  fill: var(--primary, #4c51bf);
+}
+
+.developers-header h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary, #1a202c);
+}
+
+.developers-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-bottom: 2.5rem;
+}
+
+/* === Developer Card === */
+.developer-card {
+  background: var(--card-surface, rgba(255, 255, 255, 0.04));
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  width: 260px;
+  text-align: center;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  color: var(--text-primary, #1a202c);
+}
+
+.developer-card:hover {
+  transform: translateY(-5px);
+  background: var(--hover-bg, rgba(255, 255, 255, 0.12));
+  border-color: var(--primary, #4c51bf);
+}
+
+.developer-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, var(--primary, #4c51bf), #667eea);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 1rem;
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+}
+
+.developer-avatar svg {
+  fill: white;
+  width: 36px;
+  height: 36px;
+}
+
+.developer-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: var(--text-primary, #1a202c);
+}
+
+.developer-title {
+  font-size: 0.875rem;
+  color: var(--text-secondary, #4a5568);
+}
+
+/* === Alt Bilgi === */
+.project-info {
+  text-align: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.project-description {
+  color: var(--text-primary, #1a202c);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.project-description strong {
+  color: var(--primary, #4c51bf);
+}
+
+.project-description .highlight {
+  color: #ffd700;
+  font-weight: 700;
+}
+
+.badge-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.badge {
+  padding: 0.4rem 0.9rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: white;
+}
+
+.badge-primary { background: #4c51bf; }
+.badge-success { background: #48bb78; }
+.badge-info { background: #4299e1; }
+
+/* Animasyonlar */
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    33% {
+        transform: translate(30px, -30px) rotate(120deg);
+    }
+    66% {
+        transform: translate(-20px, 20px) rotate(240deg);
+    }
+}
+
+@keyframes gradientSlide {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes wave {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    10%, 30% {
+        transform: rotate(14deg);
+    }
+    20%, 40% {
+        transform: rotate(-8deg);
+    }
+    50% {
+        transform: rotate(0deg);
+    }
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .developers-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+  .developer-card {
+    width: 100%;
+    max-width: 320px;
+  }
+}
+
+/* === Tema Uyumlu (Açık & Koyu Mod) === */
+@media (prefers-color-scheme: light) {
+  :root {
+    --card-bg: rgba(255, 255, 255, 0.9);
+    --card-surface: rgba(255, 255, 255, 1);
+    --text-primary: #1a202c;
+    --text-secondary: #4a5568;
+    --hover-bg: rgba(240, 240, 255, 0.8);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --card-bg: rgba(26, 32, 44, 0.8);
+    --card-surface: rgba(255, 255, 255, 0.04);
+    --text-primary: #e2e8f0;
+    --text-secondary: #a0aec0;
+    --hover-bg: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Print için gizle */
+@media print {
+    .developers-section {
+        break-inside: avoid;
+    }
+}
+</style>
